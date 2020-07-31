@@ -1,6 +1,7 @@
 import datetime as dt
 import numpy as np
 import pandas as pd
+import app
 
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
@@ -34,9 +35,9 @@ seassion = Session(engine)
 #########################################
 # Flask Setup
 #########################################
-app = Flask(__name__ )
+app = Flask(__name__)
 
-@app.route("/")
+@app.route('/')
 def welcome():
     return(
     '''
@@ -48,9 +49,9 @@ def welcome():
     /api/v1.0/temp/start/end<br/>
     ''')
 
-@app.route("/api/v1.0/precipitation")
+@app.route('/api/v1.0/precipitation')
 def precipitation():
-    """"return the percipitation data fro the last year"""
+    '''return the percipitation data fro the last year'''
     prev_year = dt.date(2017,8,23) - dt.timedelta(days=365)
 
     precipitation = session.query(Measurement.date, Measurement.prcp).\
@@ -60,16 +61,16 @@ def precipitation():
 
     return jsonify(precip)
    
-@app.route("/api/v1.0/stations")
+@app.route('/api/v1.0/stations')
 
 def stations():
-    """Return a list of stations"""
+    '''Return a list of stations'''
     results = session.query(Station.station).all()
     stations = list(np.ravel(results))
 
     return jsonify(stations=stations)
 
-@app.route("/api/v1.0/tobs")
+@app.route('/api/v1.0/tobs')
 
 def temp_monthly():
     prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
@@ -82,8 +83,8 @@ def temp_monthly():
     temps = list(np.ravel(results))
     return jsonify(temps=temps)
 
-@app.route("/api/v1.0/temp/<start>")
-@app.route("/api/v1.0/temp/<start>/<end>")
+@app.route('/api/v1.0/temp/<start>')
+@app.route('/api/v1.0/temp/<start>/<end>')
 def stats(start=None, end=None):
      	
     sel = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]           
